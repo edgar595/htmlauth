@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Firebase Auth</title>
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+
+  <body class="login-body">
+    <div class="box">
+    <span class="borderLine"></span>
+    <form id="MainForm" >
+        <h2 >Register User</h2>
+        <div class="inputBox">
+            <input type="email" id="emailInp" required="required">
+            <span>Username</span>
+           <i></i>
+        </div>
+        <div class="inputBox">
+            <input type="password" id="passwordInp" required="required">
+            <span>password</span>
+           <i></i>
+        </div>
+        <div class="inputBox">
+            <input type="text" id="fnameInp" required="required">
+            <span>first name</span>
+           <i></i>
+        </div>
+        <div class="inputBox">
+            <input type="text"  id="lnameInp" required="required">
+            <span>last name</span>
+           <i></i>
+        </div>
+        <div class="links">
+          <a href="login.html">Login</a>
+        </div>
+        <input type="submit" value="Sign Up">
+    </form>
+ </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" 
+    crossorigin="anonymous"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyBoF9TYrU6Vvh9xxkpP7Omn_e1kYsDSVgI",
+          authDomain: "first-aa0d4.firebaseapp.com",
+          projectId: "first-aa0d4",
+          storageBucket: "first-aa0d4.appspot.com",
+          messagingSenderId: "98927499335",
+          appId: "1:98927499335:web:642ed7333d04ed88477962"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const auth = getAuth(app);
+
+        let EmailInp = document.getElementById('emailInp');
+        let PassInp = document.getElementById('passwordInp');
+        let FnameInp = document.getElementById('fnameInp');
+        let LnameInp = document.getElementById('lnameInp');
+        let MainForm = document.getElementById('MainForm');
+
+        let RegisterUser = evt =>{
+          evt.preventDefault();
+
+          createUserWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+          .then((credentials)=>{
+              set(ref(db, 'UsersAuthList/' + credentials.user.uid),{
+                  firstname : FnameInp.value,
+                  lastname: LnameInp.value
+              });
+
+              // Clear the input fields after successful registration
+              EmailInp.value = '';
+              PassInp.value = '';
+              FnameInp.value = '';
+              LnameInp.value = '';
+          })
+          .catch((error)=>{
+              alert(error.message);
+              console.log(error.code);
+              console.log(error.message);
+          })
+      }
+
+
+        MainForm.addEventListener('submit', RegisterUser)
+      </script>
+  </body>
+
+</html>

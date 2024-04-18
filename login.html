@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Firebase Auth</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+
+<body class="login-body">
+  <div class="box">
+    <span class="borderLine"></span>
+     <form id="MainForm">
+       <h2>Login</h2>
+       <div class="inputBox">
+           <input type="email" id="emailInp" required="required">
+           <span>Username</span>
+           <i></i>
+       </div>
+       <div class="inputBox">
+           <input type="password" id="passwordInp" required="required">
+           <span>Password</span>
+           <i></i>
+       </div>
+       <div class="links">
+           <a href="register.html">Sign up</a>
+       </div>
+       <input type="submit" value="login">
+     </form>
+  </div>
+
+  <!-- Add a div to display login status -->
+  <div id="loginStatus" class="mt-3"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBoF9TYrU6Vvh9xxkpP7Omn_e1kYsDSVgI",
+      authDomain: "first-aa0d4.firebaseapp.com",
+      projectId: "first-aa0d4",
+      storageBucket: "first-aa0d4.appspot.com",
+      messagingSenderId: "98927499335",
+      appId: "1:98927499335:web:642ed7333d04ed88477962"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+    const auth = getAuth(app);
+    const dbref = ref(db);
+
+    let EmailInp = document.getElementById('emailInp');
+    let PassInp = document.getElementById('passwordInp');
+    let MainForm = document.getElementById('MainForm');
+    let LoginStatus = document.getElementById('loginStatus'); // Get the div for login status
+
+    let SignInUser = evt => {
+      evt.preventDefault();
+
+      signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+        .then((credentials) => {
+          get(child(dbref, 'UsersAuthList/' + credentials.user.uid)).then((snapshot) => {
+            if (snapshot.exists()) {
+              sessionStorage.setItem("user-info", JSON.stringify({
+              firstname: snapshot.val().firstname,
+              lastname: snapshot.val().lastname
+            }));
+            sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+            window.location.href = 'home.html';
+            }
+          });
+          })
+        .catch((error) => {
+          alert(error.message);
+          console.log(error.code);
+          console.log(error.message);
+        });
+    }
+
+
+    MainForm.addEventListener('submit', SignInUser)
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+   </head>
+<body class="home-body">
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+            </div>
+            <div class="navbar-nav">
+                <div class="user-info">
+                    <h2>User:</h2>
+                    <p id="userInfo"></p>
+                </div>
+                <button id="signOutBtn" class="sign-out-btn">
+                    Sign Out
+                    <i class="ri-logout-box-line"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="home-box">
+        <div class="header">
+            <h1>hello</h1>
+            <i class="ri-user-smile-line"></i>
+        </div>
+        <p class="navbar-text">Email: <span id="userEmail"></span></p>
+        <p><span id="lastLogin"></span></p>
+        <p><span id="createdAt"></span></p>
+    </div>
+    
+
+    <script>
+        // Retrieve user information and credentials from session storage
+        const userInfo = JSON.parse(sessionStorage.getItem("user-info"));
+        const userCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+        
+        if (userInfo && userCreds) {
+            // If user information and credentials exist, display user information and email
+            document.getElementById("userInfo").textContent = `${userInfo.firstname} ${userInfo.lastname}`;
+            document.getElementById("userEmail").textContent = userCreds.email;
+
+            // Display last login date and creation date from user credentials
+            const lastLoginAt = new Date(Number(userCreds.lastLoginAt)).toLocaleString();
+            const createdAt = new Date(Number(userCreds.createdAt)).toLocaleString();
+            document.getElementById("lastLogin").textContent = `Last Login: ${lastLoginAt}`;
+            document.getElementById("createdAt").textContent = `Created At: ${createdAt}`;
+        } else {
+            // If user information or credentials don't exist, redirect to login page
+            window.location.href = "login.html";
+        }
+
+        // Sign out button event handler
+        document.getElementById("signOutBtn").addEventListener("click", function() {
+            // Clear session storage
+            sessionStorage.removeItem("user-info");
+            sessionStorage.removeItem("user-creds");
+            // Redirect to login page
+            window.location.href = "login.html"; 
+        });
+    </script>
+</body>
+</html>
